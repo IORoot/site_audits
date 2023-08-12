@@ -9,6 +9,10 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                url: ["https://londonparkour.com", "https://ioroot.com"]
+
         steps:
             - uses: actions/checkout@v3
 
@@ -24,4 +28,4 @@ jobs:
 
             - name: Audit
               run: |
-                  muffet --exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose ${{ matrix.url }}
+                  muffet --exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose "${{ matrix.url }}"
