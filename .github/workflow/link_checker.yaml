@@ -1,0 +1,28 @@
+name: Link Checker
+
+on:
+    repository_dispatch:
+        types: [audit_link_checker]
+
+    workflow_dispatch:
+
+env:
+
+jobs:
+  urls:
+    
+
+  broken_link_checker_job:
+    runs-on: ubuntu-latest
+    name: Check for broken links
+    strategy:
+      matrix:
+        url: ["https://londonparkour.com", "https://ioroot.com"]
+    
+    steps:
+      - name: Check for broken links
+        id: link-report
+        uses: elliotforbes/broken-link-checker@1.0.2
+        with:
+          url: "${{ matrix.url }}"
+          cmd_params: "--exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose"
