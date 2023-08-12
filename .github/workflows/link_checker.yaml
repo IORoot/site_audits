@@ -18,7 +18,6 @@ jobs:
     strategy:
       matrix:
         url: ["https://londonparkour.com", "https://ioroot.com"]
-    
     steps:
       - name: Check for broken links
         id: link-report
