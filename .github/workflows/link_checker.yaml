@@ -15,13 +15,13 @@ jobs:
             - name: Set up Go
               uses: actions/setup-go@v4
               with:
-                  go-version: "1.15"
+                  go-version: "1.18"
 
-            - name: Install muffet
+            - name: Install Muffet
               run: |
                   export GO111MODULE=on
                   go install github.com/raviqqe/muffet/v2@latest
 
-            - name: audit
+            - name: Audit
               run: |
                   muffet --exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose ${{ matrix.url }}
