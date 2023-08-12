@@ -5,9 +5,28 @@ on:
 permissions:
     contents: write
 jobs:
-    build-and-deploy:
-        concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
+    create_matrix:
         runs-on: ubuntu-latest
+        outputs:
+            matrix: ${{ steps.set-matrix.outputs.matrix }}
+        steps:
+            - name: checkout
+              uses: actions/checkout@v3
+
+            - id: set-matrix
+              run: |
+                  printf "matrix={\"include\":[" > ./matrix_file.txt
+                  cat ./sites.txt | while read LINE; do printf "{\"project\":\"%s\"}," $LINE >> ./matrix_file.txt ;done
+                  printf "]}" >> ./matrix_file.txt
+                  cat ./matrix_file.txt >> $GITHUB_OUTPUT
+
+    build-and-deploy:
+        needs: create_matrix
+
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix: ${{ fromJSON(needs.create_matrix.outputs.matrix) }}
         steps:
             - name: Checkout 🛎️
               uses: actions/checkout@v3
@@ -30,7 +49,7 @@ jobs:
             - name: Audit
               run: |
                   mkdir ./build
-                  muffet --exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose "${{ matrix.url }}" > ./build/index.html
+                  muffet --exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose "${{ matrix.project }}" > ./build/index.html
 
             - name: Deploy 🚀
               uses: JamesIves/github-pages-deploy-action@v4
