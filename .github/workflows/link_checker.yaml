@@ -7,16 +7,20 @@ on:
     workflow_dispatch:
 
 jobs:
-    broken_link_checker_job:
+    build:
         runs-on: ubuntu-latest
-        name: Check for broken links
-        strategy:
-            matrix:
-                url: ["https://londonparkour.com", "https://ioroot.com"]
         steps:
-            - name: Check for broken links
-              id: link-report
-              uses: elliotforbes/broken-link-checker@1.0.2
+            - uses: actions/checkout@v3
+
+            - name: Set up Go
+              uses: actions/setup-go@v4
               with:
-                  url: "${{ matrix.url }}"
-                  cmd_params: "--exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose"
+                  go-version: "1.15"
+
+            - name: install muffet
+              run: |
+                  go install github.com/raviqqe/muffet/v2@latest
+
+            - name: audit
+              run: |
+                  muffet --exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose ${{ matrix.url }}
