@@ -53,12 +53,11 @@ jobs:
 
             - name: Move 🚚
               run: |
-                  pwd
-                  ls -la
-                  cd ..
-                  ls -la
-                  cd -
                   mv ../results.txt ./results/links_$(basename ${{ matrix.url }}).txt
+
+            - name: Readme 📄
+              run: |
+                  awk 'NR==FNR{a[NR]=$0;next}/^# Website List$/{print;for(i in a)print a[i];while(getline line && line !~ /^# Tests$/);print line;while(getline)print}' sites.txt readme.md > temp.md && mv temp.md readme.md
 
             - name: Commit 💍
               uses: EndBug/add-and-commit@v9
