@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Link Checker
 on:
     workflow_dispatch:
 
@@ -29,8 +29,13 @@ jobs:
             fail-fast: false
             matrix: ${{ fromJSON(needs.create_matrix.outputs.matrix) }}
         steps:
-            - name: Check
+            - name: Check 🔗
               uses: ruzickap/action-my-broken-link-checker@v2
               with:
                   url: ${{ matrix.project }}
-                  cmd_params: "--one-page-only --max-connections=10 --color=always" # Check just one page
+                  cmd_params: "--one-page-only --exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose" # Check just one page
+
+            - name: Deploy 🚀
+              uses: JamesIves/github-pages-deploy-action@v4
+              with:
+                  folder: build # The folder the action should deploy.
