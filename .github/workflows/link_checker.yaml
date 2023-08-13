@@ -45,8 +45,9 @@ jobs:
                   go install github.com/raviqqe/muffet/v2@latest
 
             - name: Audit 🚀
+              continue-on-error: true
               run: |
-                  muffet --one-page-only --skip-tls-verification --exclude=google.com --buffer-size=8192 --max-connections=10 "${{ matrix.url }}" > ./results/links_$(basename ${{ matrix.url }}).txt
+                  muffet --one-page-only --skip-tls-verification --exclude=google.com --buffer-size=8192 --max-connections=10 "${{ matrix.url }}" > ./results/links_$(basename ${{ matrix.url }}).txt || true
 
             - name: Commit 💍
               uses: EndBug/add-and-commit@v9
