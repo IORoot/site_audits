@@ -1,4 +1,4 @@
-name: Link Checker
+name: 🔗 Link Checker
 
 on:
     repository_dispatch:
@@ -46,7 +46,7 @@ jobs:
 
             - name: Audit 🚀
               run: |
-                  muffet --one-page-only --skip-tls-verification --exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose "${{ matrix.url }}" > ./results/links_${{ matrix.url }}.txt
+                  muffet --one-page-only --skip-tls-verification --exclude=google.com --buffer-size=8192 --max-connections=10 "${{ matrix.url }}" > ./results/links_$(basename ${{ matrix.url }}).txt
 
             - name: Commit 💍
               uses: EndBug/add-and-commit@v9
