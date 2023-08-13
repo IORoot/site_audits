@@ -31,9 +31,6 @@ jobs:
             matrix: ${{ fromJSON(needs.create_matrix.outputs.matrix) }}
 
         steps:
-            - name: Checkout 🛒
-              uses: actions/checkout@v3
-
             - name: Set up Go ⚙️
               uses: actions/setup-go@v4
               with:
@@ -47,7 +44,14 @@ jobs:
             - name: Audit 🚀
               continue-on-error: true
               run: |
-                  muffet --one-page-only --skip-tls-verification --exclude=google.com --buffer-size=8192 --max-connections=10 "${{ matrix.url }}" > ./results/links_$(basename ${{ matrix.url }}).txt || true
+                  muffet --one-page-only --skip-tls-verification --exclude=google.com --buffer-size=8192 --max-connections=10 "${{ matrix.url }}" > ./results.txt || true
+
+            - name: Checkout 🛒
+              uses: actions/checkout@v3
+
+            - name: Move 🚚
+              run: |
+                  mv ./results.txt ./results/links_$(basename ${{ matrix.url }}).txt
 
             - name: Commit 💍
               uses: EndBug/add-and-commit@v9
