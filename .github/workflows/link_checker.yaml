@@ -1,8 +1,9 @@
 name: 🔗 Link Checker
 
 on:
-    repository_dispatch:
-        types: [audit_link_checker]
+    schedule:
+        # * is a special character in YAML so you have to quote this string
+        - cron: "0 0 * * 5"
 
     workflow_dispatch:
 
@@ -44,7 +45,7 @@ jobs:
             - name: Audit 🚀
               continue-on-error: true
               run: |
-                  muffet --one-page-only --skip-tls-verification --exclude=google.com --buffer-size=8192 --max-connections=10 "${{ matrix.url }}" > ../results.txt || true
+                  muffet --skip-tls-verification --exclude=google.com --buffer-size=8192 --max-connections=10 "${{ matrix.url }}" > ../results.txt || true
 
             - name: Checkout 🛒
               uses: actions/checkout@v3
