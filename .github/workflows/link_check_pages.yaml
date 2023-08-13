@@ -29,25 +29,8 @@ jobs:
             fail-fast: false
             matrix: ${{ fromJSON(needs.create_matrix.outputs.matrix) }}
         steps:
-            - name: Checkout 🛎️
-              uses: actions/checkout@v3
-
-            - name: Set up Go
-              uses: actions/setup-go@v4
+            - name: Check
+              uses: ruzickap/action-my-broken-link-checker@v2
               with:
-                  go-version: "1.18"
-
-            - name: Install Muffet
-              run: |
-                  export GO111MODULE=on
-                  go install github.com/raviqqe/muffet/v2@latest
-
-            - name: Audit
-              run: |
-                  mkdir ./build
-                  muffet --exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose ${{ matrix.project }} > ./build/index.html
-
-            - name: Deploy 🚀
-              uses: JamesIves/github-pages-deploy-action@v4
-              with:
-                  folder: build # The folder the action should deploy.
+                  url: ${{ matrix.project }}
+                  cmd_params: "--one-page-only --max-connections=10 --color=always" # Check just one page
