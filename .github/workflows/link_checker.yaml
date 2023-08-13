@@ -18,7 +18,7 @@ jobs:
             - id: set-matrix
               run: |
                   printf "matrix={\"include\":[" > ./matrix_file.txt
-                  cat ./sites.txt | while read LINE; do printf "{\"project\":\"%s\"}," $LINE >> ./matrix_file.txt ;done
+                  cat ./sites.txt | while read LINE; do printf "{\"url\":\"%s\"}," $LINE >> ./matrix_file.txt ;done
                   printf "]}" >> ./matrix_file.txt
                   cat ./matrix_file.txt >> $GITHUB_OUTPUT
                   cat ./matrix_file.txt
@@ -52,4 +52,4 @@ jobs:
               uses: EndBug/add-and-commit@v9
               with:
                   author_name: Github Action
-                  message: "Adding link_checker results for ${{ matrix.project }}"
+                  message: "Adding link_checker results for ${{ matrix.url }}"
