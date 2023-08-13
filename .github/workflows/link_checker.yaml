@@ -55,9 +55,15 @@ jobs:
               run: |
                   mv ../results.txt ./results/links_$(basename ${{ matrix.url }}).txt
 
-            - name: Readme 📄
+            - name: Website List - Readme 📄
               run: |
                   awk 'NR==FNR{a[NR]=$0;next}/^# Website List$/{print;for(i in a)print a[i] RS;while(getline line && line !~ /^# Tests$/);print line;while(getline)print}' sites.txt readme.md > temp.md && mv temp.md readme.md
+
+            - name: Results - Readme 📄
+              run: |
+                  ls ./results | grep -v '^readme\.md$' > results.txt
+                  awk '/# Results/{print; while(getline < "results.txt") { printf("- [%s](./results/%s)\n", $0, $0); } f=1; next} f && /^# Tests$/{f=0} !f' readme.md > temp.md && mv temp.md readme.md
+                  rm results.txt
 
             - name: Commit 💍
               uses: EndBug/add-and-commit@v9
