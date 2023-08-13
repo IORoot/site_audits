@@ -1,9 +1,11 @@
 name: Link Checker
+
 on:
+    repository_dispatch:
+        types: [audit_link_checker]
+
     workflow_dispatch:
 
-permissions:
-    contents: write
 jobs:
     create_matrix:
         runs-on: ubuntu-latest
@@ -21,24 +23,30 @@ jobs:
                   cat ./matrix_file.txt >> $GITHUB_OUTPUT
                   cat ./matrix_file.txt
 
-    build-and-deploy:
+    build:
         needs: create_matrix
-
         runs-on: ubuntu-latest
         strategy:
             fail-fast: false
             matrix: ${{ fromJSON(needs.create_matrix.outputs.matrix) }}
+
         steps:
             - name: Checkout 🛒
               uses: actions/checkout@v3
 
-            - name: Check 🔗
-              continue-on-error: true
-              uses: ruzickap/action-my-broken-link-checker@v2.3.3
+            - name: Set up Go ⚙️
+              uses: actions/setup-go@v4
               with:
-                  url: google.com
-                  cmd_params: "--one-page-only --skip-tls-verification --exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose" # Check just one page
-                  pages_path: ./results
+                  go-version: "1.18"
+
+            - name: Install Muffet 🏗️
+              run: |
+                  export GO111MODULE=on
+                  go install github.com/raviqqe/muffet/v2@latest
+
+            - name: Audit 🚀
+              run: |
+                  muffet --one-page-only --skip-tls-verification --exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose "${{ matrix.url }}" > ./results/links_${{ matrix.url }}.txt
 
             - name: Commit 💍
               uses: EndBug/add-and-commit@v9
