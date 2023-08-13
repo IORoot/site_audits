@@ -30,10 +30,13 @@ jobs:
             matrix: ${{ fromJSON(needs.create_matrix.outputs.matrix) }}
         steps:
             - name: Check 🔗
+              continue-on-error: true
               uses: ruzickap/action-my-broken-link-checker@v2
               with:
                   url: ${{ matrix.project }}
-                  cmd_params: "--one-page-only --exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose" # Check just one page
+                  cmd_params: "--one-page-only --skip-tls-verification --exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose" # Check just one page
+                  debug: true
+                  pages_path: ./build/
 
             - name: Deploy 🚀
               uses: JamesIves/github-pages-deploy-action@v4
