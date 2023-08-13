@@ -19,6 +19,7 @@ jobs:
                   cat ./sites.txt | while read LINE; do printf "{\"project\":\"%s\"}," $LINE >> ./matrix_file.txt ;done
                   printf "]}" >> ./matrix_file.txt
                   cat ./matrix_file.txt >> $GITHUB_OUTPUT
+                  cat ./matrix_file.txt
 
     build-and-deploy:
         needs: create_matrix
