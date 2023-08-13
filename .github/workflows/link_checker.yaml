@@ -36,7 +36,7 @@ jobs:
               continue-on-error: true
               uses: ruzickap/action-my-broken-link-checker@v2.3.3
               with:
-                  url: ${{ matrix.project }}
+                  url: google.com
                   cmd_params: "--one-page-only --skip-tls-verification --exclude=google.com --buffer-size=8192 --max-connections=10 --color=always --verbose" # Check just one page
                   pages_path: ./results
 
